@@ -1,11 +1,11 @@
-package service;
+package ru.practicum.explorewhithme.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import model.User;
+import ru.practicum.explorewhithme.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import repository.UserRepository;
+import ru.practicum.explorewhithme.repository.UserRepository;
 
 import java.util.List;
 import java.util.Optional;
@@ -21,7 +21,7 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    private User save(User user) {
+    public User save(User user) {
         return userRepository.save(user);
     }
 

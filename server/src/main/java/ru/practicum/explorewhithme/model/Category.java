@@ -1,4 +1,4 @@
-package model;
+package ru.practicum.explorewhithme.model;
 
 import lombok.Data;
 

@@ -1,8 +1,8 @@
-package model;
+package ru.practicum.explorewhithme.model;
 
 public enum Status {
     PENDING,
     CANCELED,
     REJECT,
-    APPROVED
+    PUBLISHED
 }

@@ -1,11 +1,12 @@
-package mapper;
+package ru.practicum.explorewhithme.mapper;
 
-import dto.UserDto;
-import model.User;
+import org.springframework.stereotype.Component;
+import ru.practicum.explorewhithme.dto.UserDto;
+import ru.practicum.explorewhithme.model.User;
 
 import java.util.ArrayList;
 import java.util.List;
-
+@Component
 public class UserMapper {
     public UserDto toUserDto(User user) {
         return new UserDto(user.getId(), user.getEmail(), user.getName());

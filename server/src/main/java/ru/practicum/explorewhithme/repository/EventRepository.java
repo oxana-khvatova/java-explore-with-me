@@ -1,6 +1,6 @@
-package repository;
+package ru.practicum.explorewhithme.repository;
 
-import model.Event;
+import ru.practicum.explorewhithme.model.Event;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;

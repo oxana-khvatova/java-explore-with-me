@@ -1,16 +1,15 @@
-package service;
+package ru.practicum.explorewhithme.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import model.Category;
-import model.Event;
-import model.Status;
+import ru.practicum.explorewhithme.model.Event;
+import ru.practicum.explorewhithme.model.Status;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-import repository.EventRepository;
-import repository.UserRepository;
+import ru.practicum.explorewhithme.repository.EventRepository;
+import ru.practicum.explorewhithme.repository.UserRepository;
 
 import java.text.MessageFormat;
 import java.time.LocalDateTime;
@@ -29,7 +28,7 @@ public class EventService {
         this.userRepository = userRepository;
     }
 
-    private Event save(Event event) {
+    public Event save(Event event) {
         if (event.getEventDate().isBefore(LocalDateTime.now().plusHours(2))) {
             throw new RuntimeException();
         }

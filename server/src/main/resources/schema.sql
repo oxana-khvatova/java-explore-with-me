@@ -63,5 +63,5 @@ CREATE TABLE IF NOT EXISTS compilations_event
     event_id       BIGINT,
     CONSTRAINT pk_compilations_event PRIMARY KEY (id),
     CONSTRAINT FK_COMPILATION_EVENT_ON_EVENT_ID FOREIGN KEY (event_id) REFERENCES events (id),
-    CONSTRAINT FK_COMPILATION_EVENT_ON_EVENT_ID FOREIGN KEY (compilation_id) REFERENCES compilations (id)
+    CONSTRAINT FK_COMPILATION_EVENT_ON_COMPILATION_ID FOREIGN KEY (compilation_id) REFERENCES compilations (id)
 );
