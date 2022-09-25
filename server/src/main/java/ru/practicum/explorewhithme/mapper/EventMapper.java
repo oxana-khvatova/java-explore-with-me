@@ -17,9 +17,7 @@ import java.util.List;
 public class EventMapper {
     CategoryService categoryService;
     UserService userService;
-
     CategoryMapper categoryMapper;
-
     UserMapper userMapper;
 
     @Autowired
@@ -49,9 +47,29 @@ public class EventMapper {
                 event.getViews() != null ? event.getViews() : null);
     }
 
+    public EventDto toEventDto(Event event) {
+        EventDto eventDto = new EventDto();
+        eventDto.setId(event.getId());
+        eventDto.setDescription(event.getDescription());
+        eventDto.setEventDate(event.getEventDate());
+        eventDto.setPaid(event.getPaid());
+        eventDto.setTitle(event.getTitle());
+        eventDto.setAnnotation(event.getAnnotation());
+        eventDto.setCategoryId(event.getCategoryId());
+        eventDto.setInitiatorId(event.getCategoryId());
+        eventDto.setConfirmedRequest(event.getConfirmedRequest());
+        eventDto.setCreatedOn(event.getCreatedOn() != null ? event.getCreatedOn() : LocalDateTime.now());
+        eventDto.setParticipantLimit(event.getParticipantLimit());
+        eventDto.setPublishedOn(event.getPublishedOn());
+        eventDto.setRequestModeration(event.getRequestModeration());
+        eventDto.setState(event.getState() != null ? event.getState() : Status.PENDING);
+        eventDto.setViews(event.getViews());
+        return eventDto;
+    }
+
     public Event toEvent(EventDto eventDto) {
         Event event = new Event();
-        event.setId(event.getId());
+        event.setId(eventDto.getId());
         if (eventDto.getAnnotation() != null) {
             event.setAnnotation(eventDto.getAnnotation());
         }
@@ -68,9 +86,9 @@ public class EventMapper {
         event.setDescription(eventDto.getDescription());
         event.setEventDate(eventDto.getEventDate());
 
-//        if (eventDto.getInitiator() != null) {
-//            event.setInitiatorId(eventDto.getInitiator().getId());
-//        }
+        if (eventDto.getInitiatorId() != null) {
+            event.setInitiatorId(eventDto.getInitiatorId());
+        }
         event.setPaid(eventDto.getPaid());
         if (eventDto.getParticipantLimit() != null) {
             event.setParticipantLimit(eventDto.getParticipantLimit());
@@ -93,13 +111,25 @@ public class EventMapper {
         return event;
     }
 
-    public List<EventFullDto> toEventDtoList(List<Event> events) {
-        List<EventFullDto> listDto = new ArrayList<EventFullDto>();
+    public List<EventFullDto> toEventFullDtoList(List<Event> events) {
+        List<EventFullDto> listDto = new ArrayList<>();
         if (events.size() == 0) {
             return listDto;
         }
         for (Event event : events) {
             EventFullDto dto = toEventFullDto(event);
+            listDto.add(dto);
+        }
+        return listDto;
+    }
+
+    public List<EventDto> toEventShortDtoList(List<Event> events) {
+        List<EventDto> listDto = new ArrayList<>();
+        if (events.size() == 0) {
+            return listDto;
+        }
+        for (Event event : events) {
+            EventDto dto = toEventDto(event);
             listDto.add(dto);
         }
         return listDto;

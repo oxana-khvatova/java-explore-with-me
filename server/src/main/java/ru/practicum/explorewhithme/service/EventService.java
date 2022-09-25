@@ -35,12 +35,8 @@ public class EventService {
         return eventRepository.save(event);
     }
 
-    public Event upDate(Event event, Long id) {
-        Event eventUpDate = findById(id);
-        if ((!eventUpDate.getState().equals(Status.CANCELED) || !eventUpDate.getRequestModeration().equals(Boolean.TRUE))
-                && !eventUpDate.getInitiatorId().equals(id)) {
-            throw new RuntimeException();
-        }
+    public Event upDate(Event event) {
+        Event eventUpDate = new Event();
         eventUpDate.setState(Status.PENDING);
         if (event.getEventDate() != null) {
             if (event.getEventDate().isBefore(LocalDateTime.now().plusHours(2))) {
@@ -69,6 +65,44 @@ public class EventService {
         return eventRepository.save(eventUpDate);
     }
 
+    public void checkPermission(Event eventUpDate, Long userId) {
+        if (!((eventUpDate.getState().equals(Status.CANCELED) || (eventUpDate.getState().equals(Status.PENDING)))
+                || !eventUpDate.getRequestModeration().equals(Boolean.TRUE))) { //Проверка пользователя для разрешения правок
+            throw new RuntimeException();
+        }
+    }
+
+    public Event updateEventForUser(Event event, Long userId) {
+        checkPermission(event, userId);
+        return upDate(event);
+    }
+
+    public Event updateEventForAdmin(Event event, Long eventId) {
+        findById(eventId); // проверка, что событие существует
+        return upDate(event);
+    }
+
+    public Event publishedEvent(Long eventId) {
+        Event event = findById(eventId);
+        event.setState(Status.PUBLISHED);
+        return event;
+    }
+
+    public Event rejectEvent(Long eventId) {
+        Event event = findById(eventId);
+        event.setState(Status.CANCELED);
+        return event;
+    }
+
+    public Event cancel(Long userId, Long eventId) {
+        Event event = findById(eventId);
+        if (!event.getRequestModeration() || !Objects.equals(event.getInitiatorId(), userId)) {
+            throw new RuntimeException();
+        }
+        event.setState(Status.CANCELED);
+        return event;
+    }
+
     public Event findById(Long id) {
         Optional<Event> event = eventRepository.findById(id);
         if (event.isPresent()) {
@@ -91,8 +125,21 @@ public class EventService {
         return event;
     }
 
-    private Specification<Event> eventContainsText(String text) {
+    public Event getPublishedEvent (Long idEvent){
+        Event event = findById(idEvent);
+        if(event.getState().equals(Status.PUBLISHED)){
+            throw new RuntimeException();
+        }
+        return findById(idEvent);
+    }
+
+    private Specification<Event> eventDescriptionContainsText(String text) {
         return (root, query, builder) -> builder.like(root.get("description"),
+                MessageFormat.format("%{0}%", text));
+    }
+
+    private Specification<Event> eventAnnotationContainsText(String text) {
+        return (root, query, builder) -> builder.like(root.get("annotation"),
                 MessageFormat.format("%{0}%", text));
     }
 
@@ -100,16 +147,28 @@ public class EventService {
         return (root, query, builder) -> builder.equal(root.get("paid"), paid);
     }
 
-    private Specification<Event> eventIsAvailable(Boolean available) {
-        return (root, query, builder) -> builder.equal(root.get("available"), available);
-    }
+//    private Specification<Event> eventIsAvailable() {
+//        return (root, query, builder) -> builder.lessThan(root.get("confirmedRequest"), root.get("participantLimit"));
+//    }
 
     private Specification<Event> eventsBetween(LocalDateTime rangeStart, LocalDateTime rangeEnd) {
         return (root, query, builder) -> builder.between(root.get("eventDate"), rangeStart, rangeEnd);
     }
 
-    public Page<Event> getEvents(String text, Integer[] categories, Boolean paid, Boolean onlyAvailable, String sort,
-                                 String rangeStart, String rangeEnd, int from, int size) {
+    private Specification<Event> eventsAfter() {
+        return (root, query, builder) -> builder.between(root.get("eventDate"), LocalDateTime.now(),
+                LocalDateTime.of(3000, 12, 12, 15, 15, 15));
+    }
+
+    private Specification<Event> eventInCategories(Integer[] categories) {
+        return (root, query, builder) -> root.get("categoryId").in((Object[]) categories);
+    }
+
+    public List<Event> getEventsWithFilter(String text, Integer[] categories, Boolean paid, Boolean onlyAvailable,
+                                           String sort, String rangeStart, String rangeEnd, int from, int size) {
+        if (sort == null) {
+            throw new RuntimeException();
+        }
         Pageable page;
         if (sort.equals("EVENT_DATE")) {
             page = PageRequest.of(from, size, Sort.by(Sort.Direction.ASC, "eventDate"));
@@ -118,22 +177,21 @@ public class EventService {
         } else {
             throw new RuntimeException();
         }
-        Specification<Event> containsText = text == null ? null : eventContainsText(text);
+        Specification<Event> containsText = text == null ? null : eventDescriptionContainsText(text)
+                .or(eventAnnotationContainsText(text));
         Specification<Event> isPaid = paid == null ? null : eventIsPaid(paid);
-        Specification<Event> isAvailable = paid == null ? null : eventIsAvailable(onlyAvailable);
-//        Specification<Event> hasCategory = categories == null ? null : eventInCategories(categories);
+//        Specification<Event> isAvailable = onlyAvailable == null || !onlyAvailable ? null : eventIsAvailable();
+        Specification<Event> hasCategory = categories == null ? null : eventInCategories(categories);
         Specification<Event> dateRange = (rangeStart == null || rangeEnd == null) ?
-                eventsBetween(LocalDateTime.now(), null) : eventsBetween(
+                eventsAfter() : eventsBetween(
                 LocalDateTime.parse(rangeStart),
                 LocalDateTime.parse(rangeEnd));
 
-        Specification<Event> spec = Specification.where(containsText).and(isPaid).and(isAvailable).and(dateRange);
-        return eventRepository.findAll(spec, page);
-
-
-//        Pageable page = PageRequest.of(from, size, Sort.by(Sort.Direction.ASC, "eventDate"));
-//        Pageable page2 = PageRequest.of(from, size, Sort.by(Sort.Direction.ASC, "views"));
-
+        Specification<Event> spec = Specification.where(containsText)
+                .and(isPaid)
+                .and(hasCategory)
+//                .and(isAvailable);
+                .and(dateRange);
+        return eventRepository.findAll(spec, page).toList();
     }
-
 }

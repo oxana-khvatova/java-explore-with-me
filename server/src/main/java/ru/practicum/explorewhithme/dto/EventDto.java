@@ -2,8 +2,8 @@ package ru.practicum.explorewhithme.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import ru.practicum.explorewhithme.model.Status;
 
 import javax.validation.constraints.Future;
@@ -11,14 +11,17 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 
-@Data
-@AllArgsConstructor
+@Getter
+@Setter
 public class EventDto {
     private Long id;
     String annotation;
 
     @JsonProperty("category")
     Long categoryId;
+
+    @JsonProperty("users")
+    Long initiatorId;
 
     Long confirmedRequest;
 
