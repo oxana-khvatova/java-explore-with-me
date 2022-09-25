@@ -7,6 +7,7 @@ import ru.practicum.explorewhithme.dto.EventFullDto;
 import ru.practicum.explorewhithme.dto.EventDto;
 import ru.practicum.explorewhithme.mapper.EventMapper;
 import ru.practicum.explorewhithme.model.Event;
+import ru.practicum.explorewhithme.model.Status;
 import ru.practicum.explorewhithme.service.EventService;
 
 import javax.validation.Valid;
@@ -55,6 +56,7 @@ public class EventController {
         Event event = eventService.getPublishedEvent(eventId);
         return eventMapper.toEventFullDto(event);
     }
+
     @GetMapping("/users/{userId}/events/{eventId}")
     public EventFullDto getEventForUser(@PathVariable long userId, @PathVariable long eventId) {
         log.info("Запрошено событие id: " + eventId);
@@ -84,6 +86,18 @@ public class EventController {
         Event canceledEvent = eventService.cancel(userId, eventId);
         log.info("Событие: " + canceledEvent + "отменено");
         return eventMapper.toEventFullDto(canceledEvent);
+    }
+
+    @GetMapping("/admin/events")
+    public List<EventFullDto> getEventWithFilterForAdmin(@RequestParam(required = false) Integer[] users,
+                                                         @RequestParam(required = false) Status[] states,
+                                                         @RequestParam(required = false) Integer[] categories,
+                                                         @RequestParam(required = false) String rangeStart,
+                                                         @RequestParam(required = false) String rangeEnd,
+                                                         @RequestParam(required = false, defaultValue = "0") int from,
+                                                         @RequestParam(required = false, defaultValue = "10") int size) {
+        List<Event> events = eventService.getEventWithFilterForAdmin(users, states, categories, rangeStart, rangeEnd, from, size);
+        return eventMapper.toEventFullDtoList(events);
     }
 
     @PutMapping("/admin/events/{eventId}")

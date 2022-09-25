@@ -16,7 +16,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @NotNull
-    @Pattern(regexp = "^\\S+$", message = "не должен содержать пробелы")
+//    @Pattern(regexp = "^\\S+$", message = "не должен содержать пробелы")
     private String name;
     @NotNull
     @NotBlank

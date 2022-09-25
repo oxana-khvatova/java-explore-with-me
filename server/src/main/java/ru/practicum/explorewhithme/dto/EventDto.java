@@ -29,7 +29,7 @@ public class EventDto {
     LocalDateTime createdOn;
 
     @NotNull
-    @Size(max = 300)
+    @Size(min = 20, max = 7000)
     String description;
 
     @NotNull

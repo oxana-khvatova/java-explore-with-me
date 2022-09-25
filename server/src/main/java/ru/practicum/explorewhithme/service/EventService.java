@@ -13,6 +13,7 @@ import ru.practicum.explorewhithme.repository.UserRepository;
 
 import java.text.MessageFormat;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Slf4j
@@ -125,9 +126,9 @@ public class EventService {
         return event;
     }
 
-    public Event getPublishedEvent (Long idEvent){
+    public Event getPublishedEvent(Long idEvent) {
         Event event = findById(idEvent);
-        if(event.getState().equals(Status.PUBLISHED)){
+        if (event.getState().equals(Status.PUBLISHED)) {
             throw new RuntimeException();
         }
         return findById(idEvent);
@@ -147,9 +148,9 @@ public class EventService {
         return (root, query, builder) -> builder.equal(root.get("paid"), paid);
     }
 
-//    private Specification<Event> eventIsAvailable() {
-//        return (root, query, builder) -> builder.lessThan(root.get("confirmedRequest"), root.get("participantLimit"));
-//    }
+    private Specification<Event> eventIsAvailable() {
+        return (root, query, builder) -> builder.lessThan(root.get("confirmedRequest"), root.get("participantLimit"));
+    }
 
     private Specification<Event> eventsBetween(LocalDateTime rangeStart, LocalDateTime rangeEnd) {
         return (root, query, builder) -> builder.between(root.get("eventDate"), rangeStart, rangeEnd);
@@ -162,6 +163,14 @@ public class EventService {
 
     private Specification<Event> eventInCategories(Integer[] categories) {
         return (root, query, builder) -> root.get("categoryId").in((Object[]) categories);
+    }
+
+    private Specification<Event> eventInUsers(Integer[] users) {
+        return (root, query, builder) -> root.get("initiatorId").in((Object[]) users);
+    }
+
+    private Specification<Event> eventInStates(Status[] states) {
+        return (root, query, builder) -> root.get("state").in((Object[]) states);
     }
 
     public List<Event> getEventsWithFilter(String text, Integer[] categories, Boolean paid, Boolean onlyAvailable,
@@ -177,20 +186,39 @@ public class EventService {
         } else {
             throw new RuntimeException();
         }
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         Specification<Event> containsText = text == null ? null : eventDescriptionContainsText(text)
                 .or(eventAnnotationContainsText(text));
         Specification<Event> isPaid = paid == null ? null : eventIsPaid(paid);
-//        Specification<Event> isAvailable = onlyAvailable == null || !onlyAvailable ? null : eventIsAvailable();
+        Specification<Event> isAvailable = onlyAvailable == null || !onlyAvailable ? null : eventIsAvailable();
         Specification<Event> hasCategory = categories == null ? null : eventInCategories(categories);
         Specification<Event> dateRange = (rangeStart == null || rangeEnd == null) ?
                 eventsAfter() : eventsBetween(
-                LocalDateTime.parse(rangeStart),
-                LocalDateTime.parse(rangeEnd));
+                LocalDateTime.parse(rangeStart, formatter),
+                LocalDateTime.parse(rangeEnd, formatter));
 
         Specification<Event> spec = Specification.where(containsText)
                 .and(isPaid)
                 .and(hasCategory)
-//                .and(isAvailable);
+                .and(isAvailable)
+                .and(dateRange);
+        return eventRepository.findAll(spec, page).toList();
+    }
+
+    public List<Event> getEventWithFilterForAdmin(Integer[] users, Status[] states, Integer[] categories,
+                                                  String rangeStart, String rangeEnd, int from, int size) {
+        Pageable page = PageRequest.of(from, size, Sort.by(Sort.Direction.ASC, "eventDate"));
+        Specification<Event> hasCategory = categories == null ? null : eventInCategories(categories);
+        Specification<Event> hasUsers = users == null ? null : eventInUsers(users);
+        Specification<Event> hasStates = states == null ? null : eventInStates(states);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        Specification<Event> dateRange = (rangeStart == null || rangeEnd == null) ?
+                eventsAfter() : eventsBetween(
+                LocalDateTime.parse(rangeStart, formatter),
+                LocalDateTime.parse(rangeEnd, formatter));
+        Specification<Event> spec = Specification.where(hasCategory)
+                .and(hasUsers)
+                .and(hasStates)
                 .and(dateRange);
         return eventRepository.findAll(spec, page).toList();
     }
