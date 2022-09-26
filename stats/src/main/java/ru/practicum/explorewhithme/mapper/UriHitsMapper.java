@@ -2,7 +2,7 @@ package ru.practicum.explorewhithme.mapper;
 
 import org.springframework.stereotype.Component;
 import ru.practicum.explorewhithme.dto.ViewStatsDto;
-import ru.practicum.explorewhithme.model.UriHits;
+import ru.practicum.explorewhithme.repository.UriHits;
 
 import java.util.ArrayList;
 import java.util.List;

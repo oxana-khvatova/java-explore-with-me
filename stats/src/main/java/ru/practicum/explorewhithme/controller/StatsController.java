@@ -2,15 +2,17 @@ package ru.practicum.explorewhithme.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.explorewhithme.dto.EndpointHitDto;
 import ru.practicum.explorewhithme.dto.ViewStatsDto;
 import ru.practicum.explorewhithme.mapper.EndpointHitMapper;
 import ru.practicum.explorewhithme.mapper.UriHitsMapper;
 import ru.practicum.explorewhithme.model.EndpointHit;
-import ru.practicum.explorewhithme.model.UriHits;
+import ru.practicum.explorewhithme.repository.UriHits;
 import ru.practicum.explorewhithme.service.ServiceStats;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
@@ -36,11 +38,13 @@ public class StatsController {
     }
 
     @GetMapping("/stats")
-    public List<ViewStatsDto> takeStats(@RequestParam String start,
-                                        @RequestParam String end,
+    public List<ViewStatsDto> takeStats(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime start,
+                                        @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime end,
                                         @RequestParam(required = false) String[] uris,
-                                        @RequestParam(required = false) Boolean unique) {
-        List<UriHits> hits = serviceStats.takeStates(start, end, uris, unique);
+                                        @RequestParam(required = false, defaultValue = "false") Boolean unique) {
+        List<UriHits> hits = serviceStats.takeStats(start, end, uris, unique);
         return uriHitsMapper.toViewStats(hits);
     }
+
+
 }

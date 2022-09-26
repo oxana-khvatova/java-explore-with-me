@@ -3,14 +3,18 @@ package ru.practicum.explorewhithme.controller;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.explorewhithme.client.StatsClient;
 import ru.practicum.explorewhithme.dto.EventFullDto;
 import ru.practicum.explorewhithme.dto.EventDto;
+import ru.practicum.explorewhithme.dto.HitDto;
 import ru.practicum.explorewhithme.mapper.EventMapper;
 import ru.practicum.explorewhithme.model.Event;
 import ru.practicum.explorewhithme.model.Status;
 import ru.practicum.explorewhithme.service.EventService;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
@@ -20,10 +24,13 @@ public class EventController {
     EventService eventService;
     EventMapper eventMapper;
 
+    StatsClient statsClient;
+
     @Autowired
-    public EventController(EventService eventService, EventMapper eventMapper) {
+    public EventController(EventService eventService, EventMapper eventMapper, StatsClient statsClient) {
         this.eventService = eventService;
         this.eventMapper = eventMapper;
+        this.statsClient = statsClient;
     }
 
     @PostMapping("/users/{userId}/events")
@@ -51,8 +58,9 @@ public class EventController {
     }
 
     @GetMapping("/events/{eventId}")
-    public EventFullDto getPublishedEvent(@PathVariable long eventId) {
+    public EventFullDto getPublishedEvent(@PathVariable long eventId, HttpServletRequest request) {
         log.info("Запрошено опубликованное событие id: " + eventId);
+        sendHit(request);
         Event event = eventService.getPublishedEvent(eventId);
         return eventMapper.toEventFullDto(event);
     }
@@ -120,5 +128,10 @@ public class EventController {
         Event rejectEvent = eventService.rejectEvent(eventId);
         log.info("Событие: " + rejectEvent + "отклонено");
         return eventMapper.toEventFullDto(rejectEvent);
+    }
+
+    private void sendHit(HttpServletRequest request) {
+        HitDto hit = new HitDto("server", request.getRequestURI(), request.getRemoteAddr(), LocalDateTime.now());
+        statsClient.sendHit(hit);
     }
 }
