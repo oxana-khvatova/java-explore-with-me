@@ -21,10 +21,10 @@ public class RequestMapper {
 
     public List<RequestDto> toRequestDtoList(List<Request> requests) {
         List<RequestDto> listDto = new ArrayList<RequestDto>();
-        if ( requests.size() == 0) {
+        if (requests.size() == 0) {
             return listDto;
         }
-        for (Request request :  requests) {
+        for (Request request : requests) {
             RequestDto dto = toRequestDto(request);
             listDto.add(dto);
         }

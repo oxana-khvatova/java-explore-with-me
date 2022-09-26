@@ -48,17 +48,17 @@ public class CompilationService {
         compilation.setEvents(events);
     }
 
-    public void pinCompilation(Long compId){
+    public void pinCompilation(Long compId) {
         Compilation compilation = findById(compId);
         compilation.setPinned(Boolean.TRUE);
     }
 
-    public void deletePinCompilation(Long compId){
+    public void deletePinCompilation(Long compId) {
         Compilation compilation = findById(compId);
         compilation.setPinned(Boolean.FALSE);
     }
 
-    public void deleteCompilation(Long compId){
+    public void deleteCompilation(Long compId) {
         Compilation compilation = findById(compId);
         compilationRepository.delete(compilation);
     }
@@ -70,10 +70,10 @@ public class CompilationService {
         } else throw new RuntimeException("Compilation id= " + id + " not found");
     }
 
-    public List<Compilation> findCompilations(Boolean pinned, Integer from, Integer size){
+    public List<Compilation> findCompilations(Boolean pinned, Integer from, Integer size) {
         Sort sortById = Sort.by(Sort.Direction.ASC, "id");
         Pageable page = PageRequest.of(from, size, sortById);
-        if(pinned.equals(Boolean.TRUE)) {
+        if (pinned.equals(Boolean.TRUE)) {
             return compilationRepository.findPinnedCompilations(page);
         } else {
             return compilationRepository.findCompilations(page);

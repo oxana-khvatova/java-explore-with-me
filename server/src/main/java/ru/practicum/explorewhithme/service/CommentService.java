@@ -30,7 +30,7 @@ public class CommentService {
 
     public Comment save(Comment comment) {
         Event event = eventService.findById(comment.getEventId());
-        if(Objects.equals(event.getInitiatorId(), comment.getAuthorId())){
+        if (Objects.equals(event.getInitiatorId(), comment.getAuthorId())) {
             throw new RuntimeException("Писать комментарий на своё событие не возможно");
         }
         comment.setCreated(LocalDateTime.now());
@@ -38,7 +38,7 @@ public class CommentService {
     }
 
     public Comment update(Comment comment, Long userId) {
-        if(!Objects.equals(comment.getEventId(), userId)){
+        if (!Objects.equals(comment.getEventId(), userId)) {
             throw new RuntimeException("Исправить чужой комментарий не возможно");
         }
         Comment updateComment = findById(comment.getId());
@@ -70,7 +70,7 @@ public class CommentService {
                 .sorted((o1, o2) -> o2.getCreated().compareTo(o1.getCreated())).collect(Collectors.toList());
     }
 
-    public void deleteComment(Long commentId){
+    public void deleteComment(Long commentId) {
         commentRepository.delete(findById(commentId));
     }
 }

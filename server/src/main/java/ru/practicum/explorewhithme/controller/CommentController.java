@@ -25,7 +25,7 @@ public class CommentController {
         this.commentService = commentService;
     }
 
-    @PostMapping ("/comments")// Добавить комментарий на своё событие нельзя
+    @PostMapping("/comments")// Добавить комментарий на своё событие нельзя
     public CommentDto createComment(@Valid @RequestBody CommentDto commentDto) {
         Comment comment = commentMapper.toComment(commentDto);
         Comment savedComment = commentService.save(comment);
@@ -33,7 +33,7 @@ public class CommentController {
         return commentMapper.toCommentDto(savedComment);
     }
 
-    @PatchMapping ("/comments/{userId}")//Исправить комментарий может только автор комментария
+    @PatchMapping("/comments/{userId}")//Исправить комментарий может только автор комментария
     public CommentDto updateComment(@Valid @RequestBody CommentDto commentDto, @PathVariable long userId) {
         Comment comment = commentMapper.toComment(commentDto);
         Comment savedComment = commentService.update(comment, userId);
@@ -42,25 +42,25 @@ public class CommentController {
     }
 
     @GetMapping("/comments/{commId}") //Получить полную информацию о комментарии
-    public CommentFullDto getFullComment(@PathVariable long commId){
+    public CommentFullDto getFullComment(@PathVariable long commId) {
         Comment comment = commentService.findById(commId);
         return commentMapper.toCommentFullDto(comment);
     }
 
     @GetMapping("/comments/author/{authId}") //Получить все комментарии автора отсортированные по дате создания
-    public List<CommentDto> getCommentForUser(@PathVariable long authId){
+    public List<CommentDto> getCommentForUser(@PathVariable long authId) {
         List<Comment> comments = commentService.getCommentForAuthor(authId);
         return commentMapper.toCommentDtoList(comments);
     }
 
     @GetMapping("/comments/event/{eventId}") // Получить все комментарии события отсортированные по дате создания
-    public List<CommentDto> getCommentForEvent(@PathVariable long eventId){
+    public List<CommentDto> getCommentForEvent(@PathVariable long eventId) {
         List<Comment> comments = commentService.getCommentForEvent(eventId);
         return commentMapper.toCommentDtoList(comments);
     }
 
     @DeleteMapping("/comments/{commId}")
-    public void deleteComment (@PathVariable long commId){
+    public void deleteComment(@PathVariable long commId) {
         commentService.deleteComment(commId);
         log.info("Комментарий id " + commId + " удалён");
     }

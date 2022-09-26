@@ -54,9 +54,9 @@ public class CommentMapper {
                 comment.getCreated() == null ? LocalDateTime.now() : comment.getCreated());
     }
 
-    public List<CommentDto> toCommentDtoList(List<Comment> comments){
+    public List<CommentDto> toCommentDtoList(List<Comment> comments) {
         List<CommentDto> commentDtoList = new ArrayList<>();
-        for(Comment comment: comments){
+        for (Comment comment : comments) {
             commentDtoList.add(toCommentDto(comment));
         }
         return commentDtoList;

@@ -1,6 +1,5 @@
 package ru.practicum.explorewhithme.mapper;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ru.practicum.explorewhithme.dto.CompilationDto;
 import ru.practicum.explorewhithme.dto.EventDto;
@@ -48,9 +47,9 @@ public class CompilationMapper {
         return compilationDto;
     }
 
-    public List<CompilationDto> toCompilationDtoList(List<Compilation> compilations){
+    public List<CompilationDto> toCompilationDtoList(List<Compilation> compilations) {
         List<CompilationDto> listDto = new ArrayList<>();
-        for(Compilation comp: compilations){
+        for (Compilation comp : compilations) {
             listDto.add(toCompilationDto(comp));
         }
         return listDto;
