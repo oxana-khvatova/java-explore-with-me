@@ -10,6 +10,7 @@ import ru.practicum.explorewhithme.model.Compilation;
 import ru.practicum.explorewhithme.service.CompilationService;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -61,5 +62,21 @@ public class CompilationController {
     public void deleteCompilation(@PathVariable long compId) {
         compilationService.deleteCompilation(compId);
         log.info("Подборка id " + compId + " удалена");
+    }
+
+    @GetMapping("/compilations/{compId}")
+    public CompilationDto findCompilationById(@PathVariable long compId) {
+        Compilation compilation = compilationService.findById(compId);
+        log.info("Подборка id " + compId);
+        return compilationMapper.toCompilationDto(compilation);
+    }
+
+    @GetMapping("/compilations")
+    public List<CompilationDto> findCompilations(@RequestParam(required = false) boolean pinned,
+                                           @RequestParam(required = false, defaultValue = "0") int from,
+                                           @RequestParam(required = false, defaultValue = "20") int size) {
+        List<Compilation> compilations = compilationService.findCompilations(pinned, from, size);
+        log.info("Подборка compilations");
+        return compilationMapper.toCompilationDtoList(compilations);
     }
 }

@@ -47,4 +47,12 @@ public class CompilationMapper {
                 compilation.getTitle());
         return compilationDto;
     }
+
+    public List<CompilationDto> toCompilationDtoList(List<Compilation> compilations){
+        List<CompilationDto> listDto = new ArrayList<>();
+        for(Compilation comp: compilations){
+            listDto.add(toCompilationDto(comp));
+        }
+        return listDto;
+    }
 }

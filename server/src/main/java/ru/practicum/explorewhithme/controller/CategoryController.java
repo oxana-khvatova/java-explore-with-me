@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.explorewhithme.dto.CategoryDto;
 import ru.practicum.explorewhithme.mapper.CategoryMapper;
 import ru.practicum.explorewhithme.model.Category;
-import ru.practicum.explorewhithme.model.User;
 import ru.practicum.explorewhithme.service.CategoryService;
 
 import javax.validation.Valid;
