@@ -2,6 +2,7 @@ package ru.practicum.explorewhithme.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import ru.practicum.explorewhithme.exception.DateException;
 import ru.practicum.explorewhithme.model.Event;
 import ru.practicum.explorewhithme.model.Status;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +32,7 @@ public class EventService {
 
     public Event save(Event event) {
         if (event.getEventDate().isBefore(LocalDateTime.now().plusHours(2))) {
-            throw new RuntimeException();
+            throw new DateException("Impossible create event in this time period");
         }
         return eventRepository.save(event);
     }
@@ -41,7 +42,7 @@ public class EventService {
         eventUpDate.setState(Status.PENDING);
         if (event.getEventDate() != null) {
             if (event.getEventDate().isBefore(LocalDateTime.now().plusHours(2))) {
-                throw new RuntimeException();
+                throw new DateException("Impossible create event in this time period");
             }
             eventUpDate.setEventDate(event.getEventDate());
         }

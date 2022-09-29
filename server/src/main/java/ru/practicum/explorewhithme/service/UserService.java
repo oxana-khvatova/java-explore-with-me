@@ -2,6 +2,7 @@ package ru.practicum.explorewhithme.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import ru.practicum.explorewhithme.exception.UserNotFoundException;
 import ru.practicum.explorewhithme.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -40,7 +41,7 @@ public class UserService {
         Optional<User> user = userRepository.findById(id);
         if (user.isPresent()) {
             return user.get();
-        } else throw new RuntimeException("User id= " + id + " not found");
+        } else throw new UserNotFoundException("User id= " + id + " not found");
     }
 
     public List<User> findAll() {
