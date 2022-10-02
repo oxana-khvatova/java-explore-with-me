@@ -89,7 +89,7 @@ public class EventController {
         return eventMapper.toEventFullDto(saveEvent);
     }
 
-    @PatchMapping("/users/{userId}/events{eventId}")
+    @PatchMapping("/users/{userId}/events/{eventId}")
     public EventFullDto cancellation(@PathVariable long userId, @PathVariable long eventId) {
         Event canceledEvent = eventService.cancel(userId, eventId);
         log.info("Событие: " + canceledEvent + "отменено");
@@ -110,9 +110,10 @@ public class EventController {
 
     @PutMapping("/admin/events/{eventId}")
     public EventFullDto updateEventForAdmin(@PathVariable long eventId, @Valid @RequestBody EventDto eventDto) {
+        eventDto.setId(eventId);
         Event event = eventMapper.toEvent(eventDto);
-        Event saveEvent = eventService.updateEventForAdmin(event, eventId);
-        log.info("Событие: " + saveEvent + "обновлено");
+        Event saveEvent = eventService.updateEventForAdmin(event);
+        log.info("Событие: id " + eventId + "обновлено");
         return eventMapper.toEventFullDto(saveEvent);
     }
 

@@ -42,10 +42,10 @@ public class RequestController {
     }
 
     @GetMapping("/users/{userId}/events/{eventId}/requests")
-    public RequestDto getUserEventRequests(@PathVariable long userId, @PathVariable long eventId) {
-        Request request = requestService.getRequestForEvent(userId, eventId);
+    public List<RequestDto> getUserEventRequests(@PathVariable long userId, @PathVariable long eventId) {
+        List<Request> requests = requestService.getRequestsForEvent(userId, eventId);
         log.info("Запрос на участие пользователя id: " + userId + "в событии" + eventId);
-        return requestMapper.toRequestDto(request);
+        return requestMapper.toRequestDtoList(requests);
     }
 
     @PatchMapping("/users/{userId}/events/{eventId}/requests/{requestId}/confirm")

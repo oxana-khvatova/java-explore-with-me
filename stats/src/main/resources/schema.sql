@@ -4,5 +4,6 @@ CREATE TABLE IF NOT EXISTS endpoint_hit
     app  VARCHAR(255)                             NOT NULL,
     uri  VARCHAR(250)                             NOT NULL,
     ip   VARCHAR(250)                             NOT NULL,
+    timestamp TIMESTAMP                           NOT NULL,
     CONSTRAINT pk_endpoint_hit PRIMARY KEY (id)
 );

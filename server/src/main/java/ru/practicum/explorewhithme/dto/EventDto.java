@@ -1,5 +1,6 @@
 package ru.practicum.explorewhithme.dto;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
@@ -14,6 +15,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 public class EventDto {
+    @JsonAlias("eventId")
     private Long id;
     String annotation;
 

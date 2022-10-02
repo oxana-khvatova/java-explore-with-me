@@ -12,8 +12,8 @@ public class RequestMapper {
     public RequestDto toRequestDto(Request request) {
         RequestDto requestDto = new RequestDto();
         requestDto.setId(request.getId());
-        requestDto.setEventId(request.getEventId());
-        requestDto.setRequesterId(request.getRequesterId());
+        requestDto.setEvent(request.getEventId());
+        requestDto.setRequester(request.getRequesterId());
         requestDto.setStatus(request.getStatus());
         requestDto.setCreated(request.getCreated());
         return requestDto;

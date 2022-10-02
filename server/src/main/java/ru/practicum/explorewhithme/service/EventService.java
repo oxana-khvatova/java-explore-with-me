@@ -34,66 +34,73 @@ public class EventService {
         if (event.getEventDate().isBefore(LocalDateTime.now().plusHours(2))) {
             throw new DateException("Impossible create event in this time period");
         }
+        event.setCreatedOn(LocalDateTime.now());
+        if (event.getConfirmedRequest() == null) {
+            event.setConfirmedRequest(0L);
+        }
+        if (event.getParticipantLimit() == null) {
+            event.setParticipantLimit(0L);
+        }
         return eventRepository.save(event);
     }
 
-    public Event upDate(Event event) {
-        Event eventUpDate = new Event();
-        eventUpDate.setState(Status.PENDING);
-        if (event.getEventDate() != null) {
-            if (event.getEventDate().isBefore(LocalDateTime.now().plusHours(2))) {
+    public Event patchEvent(Event eventToDate, Event eventPatch) {
+        eventToDate.setState(Status.PENDING);
+        if (eventPatch.getEventDate() != null) {
+            if (eventPatch.getEventDate().isBefore(LocalDateTime.now().plusHours(2))) {
                 throw new DateException("Impossible create event in this time period");
             }
-            eventUpDate.setEventDate(event.getEventDate());
+            eventToDate.setEventDate(eventPatch.getEventDate());
         }
-        if (event.getAnnotation() != null) {
-            eventUpDate.setAnnotation(event.getAnnotation());
+        if (eventPatch.getAnnotation() != null) {
+            eventToDate.setAnnotation(eventPatch.getAnnotation());
         }
-        if (event.getCategoryId() != null) {
-            eventUpDate.setCategoryId(event.getCategoryId());
+        if (eventPatch.getCategoryId() != null) {
+            eventToDate.setCategoryId(eventPatch.getCategoryId());
         }
-        if (event.getDescription() != null) {
-            eventUpDate.setDescription(event.getDescription());
+        if (eventPatch.getDescription() != null) {
+            eventToDate.setDescription(eventPatch.getDescription());
         }
-        if (event.getPaid() != null) {
-            eventUpDate.setPaid(event.getPaid());
+        if (eventPatch.getPaid() != null) {
+            eventToDate.setPaid(eventPatch.getPaid());
         }
-        if (event.getParticipantLimit() != null) {
-            eventUpDate.setParticipantLimit(event.getParticipantLimit());
+        if (eventPatch.getParticipantLimit() != null) {
+            eventToDate.setParticipantLimit(eventPatch.getParticipantLimit());
         }
-        if (event.getTitle() != null) {
-            eventUpDate.setTitle(event.getTitle());
+        if (eventPatch.getTitle() != null) {
+            eventToDate.setTitle(eventPatch.getTitle());
         }
-        return eventRepository.save(eventUpDate);
+        return eventRepository.save(eventToDate);
     }
 
-    public void checkPermission(Event eventUpDate, Long userId) {
-        if (!((eventUpDate.getState().equals(Status.CANCELED) || (eventUpDate.getState().equals(Status.PENDING)))
-                || !eventUpDate.getRequestModeration().equals(Boolean.TRUE))) { //Проверка пользователя для разрешения правок
+    public void checkPermission(Event event, Long userId) {
+        if (!((event.getState().equals(Status.CANCELED) || (event.getState().equals(Status.PENDING)))
+                || !event.getRequestModeration().equals(Boolean.TRUE))) { //Проверка пользователя для разрешения правок
             throw new RuntimeException();
         }
     }
 
-    public Event updateEventForUser(Event event, Long userId) {
+    public Event updateEventForUser(Event patchEvent, Long userId) {
+        Event event = findById(patchEvent.getId());
         checkPermission(event, userId);
-        return upDate(event);
+        return patchEvent(event, patchEvent);
     }
 
-    public Event updateEventForAdmin(Event event, Long eventId) {
-        findById(eventId); // проверка, что событие существует
-        return upDate(event);
+    public Event updateEventForAdmin(Event patchEvent) {
+        Event event = findById(patchEvent.getId());
+        return patchEvent(event, patchEvent);
     }
 
     public Event publishedEvent(Long eventId) {
         Event event = findById(eventId);
         event.setState(Status.PUBLISHED);
-        return event;
+        return eventRepository.save(event);
     }
 
     public Event rejectEvent(Long eventId) {
         Event event = findById(eventId);
         event.setState(Status.CANCELED);
-        return event;
+        return eventRepository.save(event);
     }
 
     public Event cancel(Long userId, Long eventId) {
@@ -102,7 +109,7 @@ public class EventService {
             throw new RuntimeException();
         }
         event.setState(Status.CANCELED);
-        return event;
+        return eventRepository.save(event);
     }
 
     public Event findById(Long id) {
@@ -129,7 +136,7 @@ public class EventService {
 
     public Event getPublishedEvent(Long idEvent) {
         Event event = findById(idEvent);
-        if (event.getState().equals(Status.PUBLISHED)) {
+        if (!event.getState().equals(Status.PUBLISHED)) {
             throw new RuntimeException();
         }
         return findById(idEvent);

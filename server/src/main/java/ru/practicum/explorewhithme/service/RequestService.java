@@ -12,6 +12,7 @@ import ru.practicum.explorewhithme.repository.RequestRepository;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -50,8 +51,9 @@ public class RequestService {
     }
 
     public Request findById(Long id) {
-        if (requestRepository.findById(id).isPresent()) {
-            return requestRepository.findById(id).get();
+        Optional<Request> r = requestRepository.findById(id);
+        if (r.isPresent()) {
+            return r.get();
         } else {
             throw new RuntimeException();
         }
@@ -70,10 +72,10 @@ public class RequestService {
         return requestRepository.findByRequesterId(userId);
     }
 
-    public Request getRequestForEvent(Long userId, Long eventId) {
-        Request request = findById(eventId);
-        if (Objects.equals(request.getRequesterId(), userId)) {
-            return request;
+    public List<Request> getRequestsForEvent(Long userId, Long eventId) {
+        Event event = eventService.findById(eventId);
+        if (Objects.equals(event.getInitiatorId(), userId)) {
+            return requestRepository.findByEventId(eventId);
         } else {
             throw new RuntimeException();
         }
@@ -83,14 +85,18 @@ public class RequestService {
         Event event = eventService.findById(eventId);
         Request request = findById(requestId);
         if ((event.getParticipantLimit() == 0 || (event.getParticipantLimit() > event.getConfirmedRequest()))
-                && !Objects.equals(event.getInitiatorId(), userId)) {
-            request.setStatus(Status.APPROVED);
+                && Objects.equals(event.getInitiatorId(), userId)) {
+            request.setStatus(Status.CONFIRMED);
             event.setConfirmedRequest(event.getConfirmedRequest() + 1);
+            requestRepository.save(request);
             if (Objects.equals(event.getConfirmedRequest(), event.getParticipantLimit())
                     || event.getParticipantLimit() != 0) {
                 List<Request> requests = requestRepository.findByEventId(eventId);
                 for (Request req : requests) {
-                    req.setStatus(Status.REJECT);
+                    if (req.getStatus().equals(Status.PENDING)) {
+                        req.setStatus(Status.REJECTED);
+                        requestRepository.save(req);
+                    }
                 }
             }
             return request;
@@ -100,7 +106,7 @@ public class RequestService {
 
     public Request rejectUserRequests(Long userId, Long eventId, Long requestId) {
         Request request = findById(requestId);
-        request.setStatus(Status.REJECT);
+        request.setStatus(Status.REJECTED);
         return request;
     }
 }
