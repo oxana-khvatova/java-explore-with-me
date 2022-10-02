@@ -9,9 +9,9 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 public class EndpointHitDto {
-    String app;
-    String uri;
-    String ip;
+    private String app;
+    private String uri;
+    private String ip;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    LocalDateTime timestamp;
+    private LocalDateTime timestamp;
 }

@@ -17,39 +17,39 @@ import java.time.LocalDateTime;
 public class EventDto {
     @JsonAlias("eventId")
     private Long id;
-    String annotation;
+    private String annotation;
 
     @JsonProperty("category")
-    Long categoryId;
+    private Long categoryId;
 
     @JsonProperty("users")
-    Long initiatorId;
+    private Long initiatorId;
 
-    Long confirmedRequest;
+    private Long confirmedRequest;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    LocalDateTime createdOn;
+    private LocalDateTime createdOn;
 
     @NotNull
     @Size(min = 20, max = 7000)
-    String description;
+    private String description;
 
     @NotNull
     @Future
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    LocalDateTime eventDate;
+    private LocalDateTime eventDate;
 
     @NotNull
-    Boolean paid;
+    private Boolean paid;
 
-    Long participantLimit;
+    private Long participantLimit;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    LocalDateTime publishedOn;
+    private LocalDateTime publishedOn;
 
-    Boolean requestModeration;
-    Status state;
+    private Boolean requestModeration;
+    private Status state;
     @NotNull
-    String title;
-    Long views;
+    private String title;
+    private Long views;
 }
