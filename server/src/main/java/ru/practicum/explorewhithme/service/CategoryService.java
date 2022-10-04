@@ -8,6 +8,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import ru.practicum.explorewhithme.exception.CategoryNotFoundException;
 import ru.practicum.explorewhithme.model.Category;
 import ru.practicum.explorewhithme.repository.CategoryRepository;
 
@@ -15,14 +16,9 @@ import java.util.Optional;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class CategoryService {
-    CategoryRepository categoryRepository;
-
-    @Autowired
-    public CategoryService(CategoryRepository categoryRepository) {
-        this.categoryRepository = categoryRepository;
-    }
+    private final CategoryRepository categoryRepository;
 
     public Category save(Category category) {
         return categoryRepository.save(category);
@@ -40,7 +36,7 @@ public class CategoryService {
         Optional<Category> category = categoryRepository.findById(id);
         if (category.isPresent()) {
             return category.get();
-        } else throw new RuntimeException();
+        } else throw new CategoryNotFoundException("Категория не найдена");
     }
 
     public Page<Category> findAll(int from, int size) {

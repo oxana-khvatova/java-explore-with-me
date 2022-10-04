@@ -1,5 +1,6 @@
 package ru.practicum.explorewhithme.controller;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -15,15 +16,10 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class CommentController {
-    CommentMapper commentMapper;
-    CommentService commentService;
-
-    @Autowired
-    public CommentController(CommentMapper commentMapper, CommentService commentService) {
-        this.commentMapper = commentMapper;
-        this.commentService = commentService;
-    }
+    private final CommentMapper commentMapper;
+    private final CommentService commentService;
 
     @PostMapping("/comments")// Добавить комментарий на своё событие нельзя
     public CommentDto createComment(@Valid @RequestBody CommentDto commentDto) {

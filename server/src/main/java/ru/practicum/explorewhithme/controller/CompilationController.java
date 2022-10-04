@@ -1,5 +1,6 @@
 package ru.practicum.explorewhithme.controller;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -15,16 +16,11 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class CompilationController {
-    CompilationService compilationService;
+    private final CompilationService compilationService;
 
-    CompilationMapper compilationMapper;
-
-    @Autowired
-    public CompilationController(CompilationService compilationService, CompilationMapper compilationMapper) {
-        this.compilationService = compilationService;
-        this.compilationMapper = compilationMapper;
-    }
+    private final CompilationMapper compilationMapper;
 
     @PostMapping("/admin/compilations")
     public CompilationDto create(@Valid @RequestBody NewCompilationDto newCompilationDto) {

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
+import ru.practicum.explorewhithme.AppConstants;
 import ru.practicum.explorewhithme.model.Status;
 
 import javax.validation.constraints.Future;
@@ -27,7 +28,7 @@ public class EventDto {
 
     private Long confirmedRequest;
 
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = AppConstants.DATE_FORMATTER)
     private LocalDateTime createdOn;
 
     @NotNull
@@ -36,7 +37,7 @@ public class EventDto {
 
     @NotNull
     @Future
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = AppConstants.DATE_FORMATTER)
     private LocalDateTime eventDate;
 
     @NotNull
@@ -44,7 +45,7 @@ public class EventDto {
 
     private Long participantLimit;
 
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = AppConstants.DATE_FORMATTER)
     private LocalDateTime publishedOn;
 
     private Boolean requestModeration;

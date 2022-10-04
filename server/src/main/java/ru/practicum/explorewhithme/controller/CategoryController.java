@@ -1,5 +1,6 @@
 package ru.practicum.explorewhithme.controller;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -15,15 +16,10 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class CategoryController {
-    CategoryService categoryService;
-    CategoryMapper categoryMapper;
-
-    @Autowired
-    public CategoryController(CategoryService categoryService, CategoryMapper categoryMapper) {
-        this.categoryService = categoryService;
-        this.categoryMapper = categoryMapper;
-    }
+    private final CategoryService categoryService;
+    private final CategoryMapper categoryMapper;
 
     @GetMapping("/categories/{id}")
     public CategoryDto getCategory(@PathVariable long id) {

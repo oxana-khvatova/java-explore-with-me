@@ -1,5 +1,6 @@
 package ru.practicum.explorewhithme.mapper;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ru.practicum.explorewhithme.dto.EventFullDto;
@@ -14,20 +15,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class EventMapper {
-    CategoryService categoryService;
-    UserService userService;
-    CategoryMapper categoryMapper;
-    UserMapper userMapper;
-
-    @Autowired
-    public EventMapper(CategoryService categoryService, UserService userService,
-                       CategoryMapper categoryMapper, UserMapper userMapper) {
-        this.categoryService = categoryService;
-        this.userService = userService;
-        this.categoryMapper = categoryMapper;
-        this.userMapper = userMapper;
-    }
+    private final CategoryService categoryService;
+    private final UserService userService;
+    private final CategoryMapper categoryMapper;
+    private final UserMapper userMapper;
 
     public EventFullDto toEventFullDto(Event event) {
         return new EventFullDto(event.getId(),

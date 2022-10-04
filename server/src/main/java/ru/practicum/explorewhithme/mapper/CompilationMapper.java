@@ -1,5 +1,7 @@
 package ru.practicum.explorewhithme.mapper;
 
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ru.practicum.explorewhithme.dto.CompilationDto;
 import ru.practicum.explorewhithme.dto.EventDto;
@@ -14,16 +16,11 @@ import java.util.List;
 import java.util.Set;
 
 @Component
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class CompilationMapper {
+    private final EventService eventService;
 
-    EventService eventService;
-
-    EventMapper eventMapper;
-
-    public CompilationMapper(EventService eventService, EventMapper eventMapper) {
-        this.eventService = eventService;
-        this.eventMapper = eventMapper;
-    }
+    private final EventMapper eventMapper;
 
     public Compilation toCompilation(NewCompilationDto newCompilationDto) {
         List<Integer> eventsId = newCompilationDto.getEvents();

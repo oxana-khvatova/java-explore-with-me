@@ -17,16 +17,10 @@ import java.util.Set;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class CompilationService {
-    CompilationRepository compilationRepository;
-    EventService eventService;
-
-    @Autowired
-    public CompilationService(CompilationRepository compilationRepository, EventService eventService) {
-        this.compilationRepository = compilationRepository;
-        this.eventService = eventService;
-    }
+    private final CompilationRepository compilationRepository;
+    private final EventService eventService;
 
     public Compilation saveCompilation(Compilation compilation) {
         return compilationRepository.save(compilation);

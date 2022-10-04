@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.practicum.explorewhithme.exception.AccessException;
+import ru.practicum.explorewhithme.exception.CommentNotFoundException;
 import ru.practicum.explorewhithme.model.Comment;
 import ru.practicum.explorewhithme.model.Event;
 import ru.practicum.explorewhithme.repository.CommentRepository;
@@ -16,22 +18,15 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class CommentService {
-    CommentRepository commentRepository;
-
-    EventService eventService;
-
-    @Autowired
-    public CommentService(CommentRepository commentRepository, EventService eventService) {
-        this.commentRepository = commentRepository;
-        this.eventService = eventService;
-    }
+    private final CommentRepository commentRepository;
+    private final EventService eventService;
 
     public Comment save(Comment comment) {
         Event event = eventService.findById(comment.getEventId());
         if (Objects.equals(event.getInitiatorId(), comment.getAuthorId())) {
-            throw new RuntimeException("Писать комментарий на своё событие не возможно");
+            throw new AccessException("Писать комментарий на своё событие не возможно");
         }
         comment.setCreated(LocalDateTime.now());
         return commentRepository.save(comment);
@@ -39,7 +34,7 @@ public class CommentService {
 
     public Comment update(Comment comment, Long userId) {
         if (!Objects.equals(comment.getEventId(), userId)) {
-            throw new RuntimeException("Исправить чужой комментарий не возможно");
+            throw new AccessException("Исправить чужой комментарий не возможно");
         }
         Comment updateComment = findById(comment.getId());
         if (comment.getEventId() != null) {
@@ -55,7 +50,7 @@ public class CommentService {
         Optional<Comment> comment = commentRepository.findById(id);
         if (comment.isPresent()) {
             return comment.get();
-        } else throw new RuntimeException("Comment id= " + id + " not found");
+        } else throw new CommentNotFoundException("Comment id= " + id + " not found");
     }
 
     public List<Comment> getCommentForAuthor(Long authId) {

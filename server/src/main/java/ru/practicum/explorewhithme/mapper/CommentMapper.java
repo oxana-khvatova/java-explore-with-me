@@ -1,5 +1,6 @@
 package ru.practicum.explorewhithme.mapper;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ru.practicum.explorewhithme.dto.CommentDto;
@@ -15,21 +16,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class CommentMapper {
 
-    EventService eventService;
-    UserService userService;
-    EventMapper eventMapper;
-    UserMapper userMapper;
-
-    @Autowired
-    public CommentMapper(EventService eventService, UserService userService,
-                         EventMapper eventMapper, UserMapper userMapper) {
-        this.eventService = eventService;
-        this.userService = userService;
-        this.eventMapper = eventMapper;
-        this.userMapper = userMapper;
-    }
+    private final EventService eventService;
+    private final UserService userService;
+    private final EventMapper eventMapper;
+    private final UserMapper userMapper;
 
     public CommentDto toCommentDto(Comment comment) {
         return new CommentDto(comment.getId(), comment.getText(), comment.getEventId(),

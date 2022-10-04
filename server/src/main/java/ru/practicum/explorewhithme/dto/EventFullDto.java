@@ -3,6 +3,7 @@ package ru.practicum.explorewhithme.dto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import ru.practicum.explorewhithme.AppConstants;
 import ru.practicum.explorewhithme.model.Status;
 import ru.practicum.explorewhithme.model.User;
 
@@ -21,7 +22,7 @@ public class EventFullDto {
 
     private Long confirmedRequest;
 
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = AppConstants.DATE_FORMATTER)
     private LocalDateTime createdOn;
 
     @NotNull
@@ -30,7 +31,7 @@ public class EventFullDto {
 
     @NotNull
     @Future
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = AppConstants.DATE_FORMATTER)
     private LocalDateTime eventDate;
 
     private User initiator;
@@ -40,7 +41,7 @@ public class EventFullDto {
 
     private Long participantLimit;
 
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = AppConstants.DATE_FORMATTER)
     private LocalDateTime publishedOn;
 
     private Boolean requestModeration;

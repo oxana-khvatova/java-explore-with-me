@@ -1,5 +1,6 @@
 package ru.practicum.explorewhithme.controller;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -13,15 +14,10 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class RequestController {
-    RequestService requestService;
-    RequestMapper requestMapper;
-
-    @Autowired
-    public RequestController(RequestService requestService, RequestMapper requestMapper) {
-        this.requestService = requestService;
-        this.requestMapper = requestMapper;
-    }
+    private final RequestService requestService;
+    private final RequestMapper requestMapper;
 
     @PostMapping("/users/{userId}/requests")
     public RequestDto saveRequest(@PathVariable long userId, @RequestParam long eventId) {
@@ -50,7 +46,7 @@ public class RequestController {
 
     @PatchMapping("/users/{userId}/events/{eventId}/requests/{requestId}/confirm")
     public RequestDto confirmUserRequests(@PathVariable long userId, @PathVariable long eventId,
-                                           @PathVariable long requestId) {
+                                          @PathVariable long requestId) {
         Request request = requestService.confirmUserRequests(userId, eventId, requestId);
         log.info("Запрос на участие пользователя id: " + userId + "в событии" + eventId + "подтверждён");
         return requestMapper.toRequestDto(request);
@@ -58,7 +54,7 @@ public class RequestController {
 
     @PatchMapping("/users/{userId}/events/{eventId}/requests/{requestId}/reject")
     public RequestDto rejectUserRequests(@PathVariable long userId, @PathVariable long eventId,
-                                          @PathVariable long requestId) {
+                                         @PathVariable long requestId) {
         Request request = requestService.rejectUserRequests(userId, eventId, requestId);
         log.info("Запрос на участие пользователя id: " + userId + "в событии" + eventId + "подтверждён");
         return requestMapper.toRequestDto(request);

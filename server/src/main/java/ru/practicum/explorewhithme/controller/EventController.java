@@ -1,5 +1,6 @@
 package ru.practicum.explorewhithme.controller;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -20,18 +21,11 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class EventController {
-    EventService eventService;
-    EventMapper eventMapper;
-
-    StatsClient statsClient;
-
-    @Autowired
-    public EventController(EventService eventService, EventMapper eventMapper, StatsClient statsClient) {
-        this.eventService = eventService;
-        this.eventMapper = eventMapper;
-        this.statsClient = statsClient;
-    }
+    private final EventService eventService;
+    private final EventMapper eventMapper;
+    private final StatsClient statsClient;
 
     @PostMapping("/users/{userId}/events")
     public EventFullDto create(@PathVariable long userId, @Valid @RequestBody EventDto eventDto) {

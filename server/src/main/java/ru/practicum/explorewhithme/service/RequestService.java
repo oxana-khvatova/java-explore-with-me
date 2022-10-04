@@ -16,17 +16,11 @@ import java.util.Optional;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class RequestService {
-    RequestRepository requestRepository;
+    private final RequestRepository requestRepository;
+    private final EventService eventService;
 
-    EventService eventService;
-
-    @Autowired
-    public RequestService(RequestRepository requestRepository, EventService eventService) {
-        this.requestRepository = requestRepository;
-        this.eventService = eventService;
-    }
 
     public Request save(Long userId, Long eventId) {
         Event event = eventService.findById(eventId);

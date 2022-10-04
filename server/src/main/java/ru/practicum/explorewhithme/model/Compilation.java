@@ -20,5 +20,5 @@ public class Compilation {
             joinColumns = { @JoinColumn(name = "compilation_id") },
             inverseJoinColumns = { @JoinColumn(name = "event_id") }
     )
-    Set<Event> events;
+    private Set<Event> events;
 }

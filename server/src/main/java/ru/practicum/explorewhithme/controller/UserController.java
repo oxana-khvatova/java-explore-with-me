@@ -1,5 +1,6 @@
 package ru.practicum.explorewhithme.controller;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -15,16 +16,11 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("/admin/users")
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class UserController {
 
-    UserService userService;
-    UserMapper userMapper;
-
-    @Autowired
-    public UserController(UserService userService, UserMapper userMapper) {
-        this.userService = userService;
-        this.userMapper = userMapper;
-    }
+    private final UserService userService;
+    private final UserMapper userMapper;
 
     @GetMapping
     public List<UserDto> getAll() {

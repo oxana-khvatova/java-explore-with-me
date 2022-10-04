@@ -2,7 +2,9 @@ package ru.practicum.explorewhithme.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import ru.practicum.explorewhithme.exception.AccessException;
 import ru.practicum.explorewhithme.exception.DateException;
+import ru.practicum.explorewhithme.exception.EventNotFoundException;
 import ru.practicum.explorewhithme.model.Event;
 import ru.practicum.explorewhithme.model.Status;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,16 +21,10 @@ import java.util.*;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class EventService {
-    EventRepository eventRepository;
-    UserRepository userRepository;
-
-    @Autowired
-    public EventService(EventRepository eventRepository, UserRepository userRepository) {
-        this.eventRepository = eventRepository;
-        this.userRepository = userRepository;
-    }
+    private final EventRepository eventRepository;
+    private final UserRepository userRepository;
 
     public Event save(Event event) {
         if (event.getEventDate().isBefore(LocalDateTime.now().plusHours(2))) {
@@ -76,7 +72,7 @@ public class EventService {
     public void checkPermission(Event event, Long userId) {
         if (!((event.getState().equals(Status.CANCELED) || (event.getState().equals(Status.PENDING)))
                 || !event.getRequestModeration().equals(Boolean.TRUE))) { //Проверка пользователя для разрешения правок
-            throw new RuntimeException();
+            throw new AccessException("У пользователя нет доступа");
         }
     }
 
@@ -106,7 +102,7 @@ public class EventService {
     public Event cancel(Long userId, Long eventId) {
         Event event = findById(eventId);
         if (!event.getRequestModeration() || !Objects.equals(event.getInitiatorId(), userId)) {
-            throw new RuntimeException();
+            throw new AccessException("Не возможно изменить статус");
         }
         event.setState(Status.CANCELED);
         return eventRepository.save(event);
@@ -116,7 +112,7 @@ public class EventService {
         Optional<Event> event = eventRepository.findById(id);
         if (event.isPresent()) {
             return event.get();
-        } else throw new RuntimeException("event id= " + id + " not found");
+        } else throw new EventNotFoundException("event id= " + id + " not found");
     }
 
     public List<Event> getAllEventForInitiator(Long idInitiator, int from, int size) {
